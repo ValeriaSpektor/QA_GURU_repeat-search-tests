@@ -1,0 +1,30 @@
+# Игнорируем node_modules (зависимости)
+node_modules/
+
+# Игнорируем временные и кэш-файлы
+*.log
+*.tmp
+*.cache
+
+# Игнорируем скриншоты, кроме тех, что вручную добавлены
+!screenshots/
+screenshots/*.png
+
+# Игнорируем результаты тестов Playwright (вы можете выбрать, сохранять или игнорировать)
+playwright-report/
+playwright/.cache/
+
+# Игнорируем Allure результаты (кроме файлов, которые хотите сохранить)
+allure-results/
+allure-report/
+
+# Игнорируем конфигурации IDE
+.vscode/
+.idea/
+
+# Игнорируем файлы ОС
+.DS_Store
+Thumbs.db
+
+# Игнорируем файлы окружения
+.env
