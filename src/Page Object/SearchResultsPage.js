@@ -4,11 +4,12 @@ const { allure } = require('allure-playwright');
 class SearchResultsPage {
   constructor(page) {
     this.page = page;
+    this.resultLocator = (expectedText) => this.page.locator(`span.render_svg:has-text("${expectedText}")`).first(); // Селектор для результатов поиска
   }
 
   async verifyResults(expectedText) {
     await allure.step(`Проверка, что результаты поиска содержат текст "${expectedText}"`, async () => {
-      const resultLocator = this.page.locator(`span.render_svg:has-text("${expectedText}")`).first();
+      const resultLocator = this.resultLocator(expectedText);
       await expect(resultLocator).toBeVisible();
     });
   }

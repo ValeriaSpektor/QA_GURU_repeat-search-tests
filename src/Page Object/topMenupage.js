@@ -3,8 +3,8 @@ const { allure } = require('allure-playwright');
 class TopMenuPage {
   constructor(page) {
     this.page = page;
-    this.searchIcon = page.locator('button.header-top__actions-link[aria-label="Поиск"]');
-    this.searchInput = page.locator('input[placeholder="Что вы ищете?"]');
+    this.searchIcon = page.locator('button.header-top__actions-link[aria-label="Поиск"]'); // Селектор иконки поиска
+    this.searchInput = page.locator('input[placeholder="Что вы ищете?"]'); // Селектор поля поиска
   }
 
   async clickSearchIcon() {
