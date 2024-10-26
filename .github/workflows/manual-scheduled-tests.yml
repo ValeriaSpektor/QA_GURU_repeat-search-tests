@@ -1,81 +1,43 @@
-name: pw test
+name: Run Tests with Allure Report
 
-# Указываем триггеры для запуска workflow
-on:  
+on:
   workflow_dispatch: # Ручной запуск
-  schedule:          # Автоматический запуск по расписанию в полночь
+  schedule: # Автоматический запуск в полночь
     - cron: "0 0 * * *"
 
 jobs:
-  test:
-    timeout-minutes: 60
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
-      # Чекаут репозитория
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      # Устанавливаем Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v2
         with:
-          node-version: 'lts/*'
+          node-version: '14'
 
-      # Установка зависимостей
+      - name: Change to app directory
+        working-directory: ./app # Укажите подкаталог, где находится package.json
+
       - name: Install dependencies
         run: npm install
+        working-directory: ./app
 
-      # Устанавливаем Playwright с зависимостями
-      - name: Install Playwright with dependencies
-        run: npx playwright install --with-deps
+      - name: Run tests
+        run: npm test
+        working-directory: ./app
 
-      # Запускаем тесты
-      - name: Run Playwright tests
-        run: npm run test
-
-      # Сохраняем результаты тестов
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: test-results
-          retention-days: 20
-
-      # Сохраняем результаты Allure
-      - name: Upload Allure results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: allure-results
-          path: allure-results
-          retention-days: 20
-
-      # Забираем предыдущие отчеты для истории
-      - name: Checkout previous Allure report
-        uses: actions/checkout@v4
-        if: always()
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      # Формируем новый отчет из результатов Allure
       - name: Generate Allure report
-        uses: simple-elf/allure-report-action@master
-        if: always()
-        with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
-          keep_reports: 20
+        run: |
+          npm run allure:generate
+          npm run allure:history
+        working-directory: ./app
 
-      # Публикуем отчет на GitHub Pages
-      - name: Deploy Allure report to GitHub Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Publish Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-report
+          publish_dir: ./app/allure-report
+          keep_files: true
