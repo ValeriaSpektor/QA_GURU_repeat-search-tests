@@ -1,0 +1,20 @@
+{
+  "name": "qa_guru_repeat-search-tests",
+  "version": "1.0.0",
+  "description": "This repository contains automated tests for the repeat search usage feature.",
+  "main": "playwright.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "allureGenerate": "allure generate --clean",
+    "allureOpen": "allure open",
+    "api": "npx playwright test --grep @API",
+    "debug": "npx playwright test --ui",
+    "test": "npx playwright test",
+    "test:dev": "export NODE_ENV=auto-test npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
