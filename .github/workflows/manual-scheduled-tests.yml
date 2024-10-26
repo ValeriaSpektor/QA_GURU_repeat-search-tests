@@ -1,0 +1,39 @@
+name: Run Tests with Allure Report
+
+on:
+  workflow_dispatch: # Enables manual run
+
+  schedule: # Sets up daily automatic run at midnight
+    - cron: "0 0 * * *"
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Generate Allure report
+        run: |
+          npm run allure:generate
+          npm run allure:history
+
+      - name: Publish Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          # History location, if necessary:
+          keep_files: true
