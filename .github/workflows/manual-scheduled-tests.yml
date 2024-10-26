@@ -1,0 +1,43 @@
+name: Run Tests with Allure Report
+
+on:
+  workflow_dispatch: # Ручной запуск
+  schedule: # Автоматический запуск в полночь
+    - cron: "0 0 * * *"
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Change to app directory
+        working-directory: ./app # Укажите подкаталог, где находится package.json
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./app
+
+      - name: Run tests
+        run: npm test
+        working-directory: ./app
+
+      - name: Generate Allure report
+        run: |
+          npm run allure:generate
+          npm run allure:history
+        working-directory: ./app
+
+      - name: Publish Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app/allure-report
+          keep_files: true
